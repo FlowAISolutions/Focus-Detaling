@@ -1,0 +1,16 @@
+node_modules/
+temporary screenshots/
+.claude/
+
+# Reference/dev images not needed in production
+carpitgarage.hu_.png
+calendar idea.jpg
+brand_guideline.png
+brand_logo.png
+
+# Dev tools
+serve.mjs
+screenshot.mjs
+package.json
+package-lock.json
+BIO.txt
