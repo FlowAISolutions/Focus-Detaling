@@ -805,6 +805,64 @@
     .mobile-cta { padding: 24px; border-top: 1px solid var(--border); }
     .mobile-cta .btn { width: 100%; justify-content: center; }
 
+    /* ── Mobile Day Strip (hidden on desktop) ───────────────────── */
+    .mobile-day-strip {
+      display: none;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      gap: 6px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--bg-2);
+      scrollbar-width: none;
+    }
+    .mobile-day-strip::-webkit-scrollbar { display: none; }
+
+    .mobile-day-pill {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 10px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-family: var(--font);
+      color: var(--muted);
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .mobile-day-pill:hover:not(.past):not(.active) { border-color: var(--dim); color: var(--fg); }
+    .mobile-day-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .mobile-day-pill.past   { opacity: 0.3; cursor: default; }
+    .mdp-name { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+    .mdp-num  { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+
+    /* ── Mobile Slot Cards (hidden on desktop) ───────────────────── */
+    .mobile-slots-list { display: none; }
+
+    .mobile-slot-card {
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .mobile-slot-card.avail  { border-color: rgba(212,17,50,0.3); background: rgba(212,17,50,0.05); }
+    .mobile-slot-card.avail:hover { background: rgba(212,17,50,0.12); border-color: rgba(212,17,50,0.55); }
+    .mobile-slot-card.selected { background: var(--accent); border-color: var(--accent); }
+    .mobile-slot-card.booked   { opacity: 0.4; cursor: default; }
+
+    .msc-time   { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--fg); }
+    .mobile-slot-card.selected .msc-time { color: #fff; }
+    .mobile-slot-card.booked   .msc-time { color: var(--muted); }
+    .msc-status { font-size: 12px; color: var(--dim); }
+    .mobile-slot-card.selected .msc-status { color: rgba(255,255,255,0.75); }
+    .msc-cta    { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+
     /* ── Mobile layout overrides ─────────────────────────────────── */
     @media (max-width: 768px) {
       html, body { height: auto; overflow: auto; }
@@ -827,29 +885,18 @@
         border-bottom: 1px solid var(--border);
       }
 
-      .cal-main {
-        overflow: visible;
-        min-height: 0;
-      }
-
-      .week-nav   { padding: 0 16px; }
+      .cal-main { overflow: visible; min-height: 0; }
+      .week-nav { padding: 0 16px; }
       .week-range { font-size: 14px; }
 
-      /* Allow the calendar grid to scroll horizontally */
-      .tgrid-scroll {
-        overflow-x: auto;
-        overflow-y: auto;
-        max-height: 70vh;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .day-headers,
-      .tgrid { min-width: 560px; }
+      /* Hide desktop week view, show mobile day view */
+      .day-headers          { display: none; }
+      .tgrid-scroll         { display: none; }
+      .mobile-day-strip     { display: flex; }
+      .mobile-slots-list    { display: flex; flex-direction: column; gap: 8px; padding: 16px; }
     }
 
     @media (max-width: 480px) {
-      .day-headers,
-      .tgrid { min-width: 480px; }
       .sidebar-inner { padding: 20px 16px; }
     }
   </style>
@@ -970,15 +1017,21 @@
       <button class="today-btn" id="todayBtn" data-i18n="today-btn">Today</button>
     </div>
 
-    <!-- Day headers -->
+    <!-- Day headers (desktop only) -->
     <div class="day-headers" id="dayHeaders">
       <div class="dh-spacer"></div>
     </div>
 
-    <!-- Time grid -->
+    <!-- Time grid (desktop only) -->
     <div class="tgrid-scroll">
       <div class="tgrid" id="tgrid"></div>
     </div>
+
+    <!-- Mobile day picker strip -->
+    <div class="mobile-day-strip" id="mobileDayStrip"></div>
+
+    <!-- Mobile slot list -->
+    <div class="mobile-slots-list" id="mobileSlotsEl"></div>
 
   </main>
 </div>
@@ -1089,6 +1142,7 @@
     miniMonth:  new Date(today.getFullYear(), today.getMonth(), 1),
     selected:   null,   // { date, start, end }
     duration:   '2h',
+    mobileDay:  null,   // active day in mobile day-view
   };
 
   /* ── Demo booked data ──────────────────────────────────────────── */
@@ -1197,6 +1251,7 @@
         if (cell.isSel) el.classList.add('selected');
         el.addEventListener('click', () => {
           state.weekStart = getMonday(cell.date);
+          state.mobileDay = new Date(cell.date);
           render();
         });
       }
@@ -1316,6 +1371,101 @@
     });
   }
 
+  /* ── Mobile: init selected day to first non-past day in week ───── */
+  function initMobileDay() {
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(state.weekStart);
+      d.setDate(d.getDate() + i);
+      if (d >= today) { state.mobileDay = d; return; }
+    }
+    // all past — pick last day
+    const last = new Date(state.weekStart);
+    last.setDate(last.getDate() + 6);
+    state.mobileDay = last;
+  }
+
+  /* ── Mobile Day Strip ───────────────────────────────────────────── */
+  function renderMobileDayStrip() {
+    const strip = document.getElementById('mobileDayStrip');
+    if (!strip) return;
+    strip.innerHTML = '';
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(state.weekStart);
+      d.setDate(d.getDate() + i);
+      const isPast    = d < today && !sameDay(d, today);
+      const isActive  = state.mobileDay && sameDay(d, state.mobileDay);
+      const pill = document.createElement('button');
+      pill.className = 'mobile-day-pill';
+      if (isPast)   pill.classList.add('past');
+      if (isActive) pill.classList.add('active');
+      pill.innerHTML = `<span class="mdp-name">${DAY_NAMES[i]}</span><span class="mdp-num">${d.getDate()}</span>`;
+      if (!isPast) {
+        pill.addEventListener('click', () => {
+          state.mobileDay = new Date(d);
+          renderMobileDayStrip();
+          renderMobileDaySlots();
+          updateSummary();
+        });
+      }
+      strip.appendChild(pill);
+    }
+    // Scroll active pill into view
+    const active = strip.querySelector('.active');
+    if (active) active.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }
+
+  /* ── Mobile Day Slots ───────────────────────────────────────────── */
+  function renderMobileDaySlots() {
+    const el = document.getElementById('mobileSlotsEl');
+    if (!el) return;
+    el.innerHTML = '';
+
+    const d = state.mobileDay;
+    if (!d) {
+      el.innerHTML = '<p style="padding:24px;color:var(--muted);font-size:13px;letter-spacing:0.05em;text-transform:uppercase;">Select a day above</p>';
+      return;
+    }
+
+    const isPast = d < today && !sameDay(d, today);
+    const slots  = SLOTS[state.duration];
+
+    slots.forEach(([start, end]) => {
+      const booked = isSlotBooked(d, start, end);
+      const isSel  = !booked && state.selected &&
+                     sameDay(d, state.selected.date) && state.selected.start === start;
+
+      const card = document.createElement('div');
+      card.className = 'mobile-slot-card';
+      if (isSel)        card.classList.add('selected');
+      else if (booked)  card.classList.add('booked');
+      else if (!isPast) card.classList.add('avail');
+
+      const timeStr   = `${fmt12(start)} – ${fmt12(end)}`;
+      const durHrs    = end - start;
+      const statusLbl = booked ? SLOT_STRINGS.booked
+                      : isSel  ? SLOT_STRINGS.reserved
+                      : (durHrs === 10 ? SLOT_STRINGS.full : durHrs + 'h slot');
+      const ctaHtml   = (!booked && !isSel && !isPast)
+        ? `<span class="msc-cta">${SLOT_STRINGS.book}</span>` : '';
+
+      card.innerHTML = `
+        <div class="msc-time">${timeStr}</div>
+        <div class="msc-status">${statusLbl}</div>
+        ${ctaHtml}
+      `;
+
+      if (!booked && !isPast) {
+        card.addEventListener('click', () => {
+          state.selected = { date: new Date(d), start, end };
+          renderMobileDayStrip();
+          renderMobileDaySlots();
+          updateSummary();
+        });
+      }
+      el.appendChild(card);
+    });
+  }
+
   /* ── Summary panel ─────────────────────────────────────────────── */
   function updateSummary() {
     const el = document.getElementById('bookingSummary');
@@ -1342,9 +1492,16 @@
   }
 
   /* ── Master render ─────────────────────────────────────────────── */
+  function isMobile() { return window.innerWidth <= 768; }
+
   function render() {
     renderMini();
-    renderWeek();
+    if (isMobile()) {
+      renderMobileDayStrip();
+      renderMobileDaySlots();
+    } else {
+      renderWeek();
+    }
     updateSummary();
   }
 
@@ -1360,14 +1517,17 @@
 
   document.getElementById('prevWeek').addEventListener('click', () => {
     state.weekStart.setDate(state.weekStart.getDate() - 7);
+    if (isMobile()) initMobileDay();
     render();
   });
   document.getElementById('nextWeek').addEventListener('click', () => {
     state.weekStart.setDate(state.weekStart.getDate() + 7);
+    if (isMobile()) initMobileDay();
     render();
   });
   document.getElementById('todayBtn').addEventListener('click', () => {
     state.weekStart = getMonday(new Date());
+    state.mobileDay = new Date(today);
     render();
   });
 
@@ -1403,7 +1563,15 @@
   });
 
   /* ── Init ──────────────────────────────────────────────────────── */
+  initMobileDay();
   render();
+
+  // Re-render on resize so switching between desktop/mobile is seamless
+  let _resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(render, 120);
+  });
 
   /* ── i18n bridge — update dynamic calendar when language changes ── */
   document.addEventListener('fd:langchange', ({ detail: { t } }) => {
