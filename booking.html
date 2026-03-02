@@ -749,6 +749,109 @@
       transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .lang-switch[aria-checked="true"] .lang-thumb { transform: translateX(18px); }
+
+    /* ── Hamburger ─────────────────────────────────────────────── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 9px;
+      grid-column: 3;
+      justify-self: end;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--fg);
+      transition: transform 0.22s, opacity 0.18s;
+      transform-origin: center;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ── Mobile Nav ─────────────────────────────────────────────── */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 64px; left: 0; right: 0; bottom: 0;
+      background: var(--bg);
+      z-index: 198;
+      flex-direction: column;
+      align-items: stretch;
+      overflow-y: auto;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-links { list-style: none; flex: 1; }
+    .mobile-links li { border-bottom: 1px solid var(--border); }
+    .mobile-links a {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 20px 24px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .mobile-links a:hover { color: var(--fg); background: var(--surface); }
+    .mobile-cta { padding: 24px; border-top: 1px solid var(--border); }
+    .mobile-cta .btn { width: 100%; justify-content: center; }
+
+    /* ── Mobile layout overrides ─────────────────────────────────── */
+    @media (max-width: 768px) {
+      html, body { height: auto; overflow: auto; }
+
+      #nav         { padding: 0 20px; }
+      .nav-links   { display: none; }
+      .hamburger   { display: flex; }
+      #nav > a.btn { display: none; }
+
+      .booking-shell {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+        margin-top: 64px;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .cal-main {
+        overflow: visible;
+        min-height: 0;
+      }
+
+      .week-nav   { padding: 0 16px; }
+      .week-range { font-size: 14px; }
+
+      /* Allow the calendar grid to scroll horizontally */
+      .tgrid-scroll {
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: 70vh;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .day-headers,
+      .tgrid { min-width: 560px; }
+    }
+
+    @media (max-width: 480px) {
+      .day-headers,
+      .tgrid { min-width: 480px; }
+      .sidebar-inner { padding: 20px 16px; }
+    }
   </style>
 </head>
 <body>
@@ -772,7 +875,22 @@
     </ul>
   </nav>
   <a href="booking.html" class="btn btn-red" data-i18n="nav-book">Book Now</a>
+  <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </header>
+
+<div id="mobile-nav" class="mobile-nav" aria-hidden="true">
+  <ul class="mobile-links">
+    <li><a href="index.html" data-i18n="nav-home">Home</a></li>
+    <li><a href="index.html#packages" data-i18n="nav-services">Services</a></li>
+    <li><a href="about.html" data-i18n="nav-about">About</a></li>
+    <li><a href="contact.html" data-i18n="nav-contact">Contact</a></li>
+  </ul>
+  <div class="mobile-cta">
+    <a href="booking.html" class="btn btn-red" data-i18n="nav-book">Book Now</a>
+  </div>
+</div>
 
 <!-- BOOKING SHELL -->
 <div class="booking-shell">
@@ -1303,5 +1421,26 @@
   });
 </script>
 <script src="lang.js"></script>
+<script>
+  (function () {
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobile-nav');
+    if (!hamburger || !mobileNav) return;
+    hamburger.addEventListener('click', () => {
+      const open = hamburger.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', String(open));
+      mobileNav.setAttribute('aria-hidden', String(!open));
+      mobileNav.classList.toggle('open');
+    });
+    mobileNav.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        mobileNav.setAttribute('aria-hidden', 'true');
+        mobileNav.classList.remove('open');
+      });
+    });
+  })();
+</script>
 </body>
 </html>

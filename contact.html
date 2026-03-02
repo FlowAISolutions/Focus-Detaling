@@ -300,11 +300,78 @@
     }
 
     @media (max-width: 768px) {
-      #nav           { padding: 0 24px; }
-      .nav-links     { display: none; }
+      #nav            { padding: 0 24px; }
+      .nav-links      { display: none; }
       .contact-header { padding: 56px 24px 40px; }
-      .contact-grid  { padding: 0 24px 64px; gap: 40px; }
-      .map-wrapper   { height: 280px; }
+      .contact-grid   { padding: 0 24px 64px; gap: 40px; }
+      .map-wrapper    { height: 280px; }
+    }
+
+    @media (max-width: 480px) {
+      .contact-header { padding: 48px 24px 32px; }
+      .contact-grid   { padding: 0 24px 48px; }
+      .map-wrapper    { height: 240px; }
+    }
+
+    /* ── Hamburger ─────────────────────────────────────────────── */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 9px;
+      grid-column: 3;
+      justify-self: end;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--fg);
+      transition: transform 0.22s, opacity 0.18s;
+      transform-origin: center;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    /* ── Mobile Nav ─────────────────────────────────────────────── */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      top: 68px; left: 0; right: 0; bottom: 0;
+      background: var(--bg);
+      z-index: 198;
+      flex-direction: column;
+      align-items: stretch;
+      overflow-y: auto;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-links { list-style: none; flex: 1; }
+    .mobile-links li { border-bottom: 1px solid var(--border); }
+    .mobile-links a {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 20px 24px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .mobile-links a:hover { color: var(--fg); background: var(--surface); }
+    .mobile-links a.active { color: var(--accent); }
+    .mobile-cta { padding: 24px; border-top: 1px solid var(--border); }
+    .mobile-cta .btn { width: 100%; justify-content: center; }
+
+    @media (max-width: 768px) {
+      .hamburger    { display: flex; }
+      #nav > a.btn  { display: none; }
     }
 
     /* ── Lang Toggle ──────────────────────────────────────────── */
@@ -370,7 +437,22 @@
       </ul>
     </nav>
     <a href="booking.html" class="btn btn-red" data-i18n="nav-book">Book Now</a>
+    <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </header>
+
+  <div id="mobile-nav" class="mobile-nav" aria-hidden="true">
+    <ul class="mobile-links">
+      <li><a href="index.html" data-i18n="nav-home">Home</a></li>
+      <li><a href="index.html#packages" data-i18n="nav-packages">Packages</a></li>
+      <li><a href="about.html" data-i18n="nav-about">About</a></li>
+      <li><a href="contact.html" class="active" data-i18n="nav-contact">Contact</a></li>
+    </ul>
+    <div class="mobile-cta">
+      <a href="booking.html" class="btn btn-red" data-i18n="nav-book">Book Now</a>
+    </div>
+  </div>
 
   <!-- ══ CONTACT PAGE ═══════════════════════════════════════════════ -->
   <main id="contact-page">
@@ -430,6 +512,29 @@
     </div>
   </main>
 
+  <script>
+    (function () {
+      const hamburger = document.getElementById('hamburger');
+      const mobileNav = document.getElementById('mobile-nav');
+      if (!hamburger || !mobileNav) return;
+      hamburger.addEventListener('click', () => {
+        const open = hamburger.classList.toggle('open');
+        hamburger.setAttribute('aria-expanded', String(open));
+        mobileNav.setAttribute('aria-hidden', String(!open));
+        mobileNav.classList.toggle('open');
+        document.body.style.overflow = open ? 'hidden' : '';
+      });
+      mobileNav.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => {
+          hamburger.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+          mobileNav.setAttribute('aria-hidden', 'true');
+          mobileNav.classList.remove('open');
+          document.body.style.overflow = '';
+        });
+      });
+    })();
+  </script>
   <script src="lang.js"></script>
 </body>
 </html>
