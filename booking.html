@@ -1176,7 +1176,7 @@
 
   async function loadAvailability() {
     try {
-      const res = await fetch('/api/v1/availability');
+      const res = await fetch('https://nonveritable-spectrological-loida.ngrok-free.dev/api/v1/availability');
       if (res.ok) {
         BOOKED = await res.json();
         render();
@@ -1592,7 +1592,7 @@
     };
 
     try {
-      const res = await fetch('/api/v1/bookings', {
+      const res = await fetch('https://nonveritable-spectrological-loida.ngrok-free.dev/api/v1/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
