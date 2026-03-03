@@ -899,6 +899,29 @@
     @media (max-width: 480px) {
       .sidebar-inner { padding: 20px 16px; }
     }
+
+    /* ── Slot-taken toast ───────────────────────────────────── */
+    #slotToast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1a1a1a;
+      border: 1px solid var(--accent);
+      color: var(--fg);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 14px 22px;
+      z-index: 999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      white-space: nowrap;
+    }
+    #slotToast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -1065,33 +1088,33 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" data-i18n="lbl-first">First Name</label>
-            <input class="form-input" type="text" placeholder="John" data-i18n-ph="ph-first">
+            <input class="form-input" id="fFirstName" type="text" placeholder="John" data-i18n-ph="ph-first">
           </div>
           <div class="form-group">
             <label class="form-label" data-i18n="lbl-last">Last Name</label>
-            <input class="form-input" type="text" placeholder="Doe" data-i18n-ph="ph-last">
+            <input class="form-input" id="fLastName" type="text" placeholder="Doe" data-i18n-ph="ph-last">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" data-i18n="lbl-email">Email</label>
-            <input class="form-input" type="email" placeholder="john@example.com" data-i18n-ph="ph-email">
+            <input class="form-input" id="fEmail" type="email" placeholder="john@example.com" data-i18n-ph="ph-email">
           </div>
           <div class="form-group">
             <label class="form-label" data-i18n="lbl-phone">Phone</label>
-            <input class="form-input" type="tel" placeholder="+1 555 000 0000" data-i18n-ph="ph-phone">
+            <input class="form-input" id="fPhone" type="tel" placeholder="+1 555 000 0000" data-i18n-ph="ph-phone">
           </div>
         </div>
         <div class="form-row full">
           <div class="form-group">
             <label class="form-label" data-i18n="lbl-vehicle">Vehicle (Make &amp; Model)</label>
-            <input class="form-input" type="text" placeholder="e.g. BMW M3 Competition 2024" data-i18n-ph="ph-vehicle">
+            <input class="form-input" id="fVehicle" type="text" placeholder="e.g. BMW M3 Competition 2024" data-i18n-ph="ph-vehicle">
           </div>
         </div>
         <div class="form-row full">
           <div class="form-group">
             <label class="form-label" data-i18n="lbl-notes">Notes (optional)</label>
-            <textarea class="form-input" rows="3" placeholder="Special requests, paint correction needs, etc." data-i18n-ph="ph-notes"></textarea>
+            <textarea class="form-input" id="fNotes" rows="3" placeholder="Special requests, paint correction needs, etc." data-i18n-ph="ph-notes"></textarea>
           </div>
         </div>
         <div class="form-actions">
@@ -1109,6 +1132,8 @@
 
   </div>
 </div>
+
+<div id="slotToast">That slot was just taken — please choose another time.</div>
 
 <script>
   /* ── Constants ─────────────────────────────────────────────────── */
@@ -1145,30 +1170,28 @@
     mobileDay:  null,   // active day in mobile day-view
   };
 
-  /* ── Demo booked data ──────────────────────────────────────────── */
-  // Pre-seed some random booked slots for realism
-  const BOOKED = (function() {
-    const map = {};
-    // seed deterministically based on day-of-year
-    const d = new Date(today);
-    for (let i = 0; i < 35; i++) {
-      const key = dkey(d);
-      // skip first 2 days to leave some open around today
-      if (i > 1) {
-        const r = (d.getDate() * 31 + d.getMonth() * 7) % 10;
-        if (r < 5) {
-          const bookedHours = [];
-          if (r < 4) bookedHours.push(8);
-          if (r < 3) bookedHours.push(10);
-          if (r < 2) bookedHours.push(14);
-          if (r < 1) bookedHours.push(12);
-          if (bookedHours.length) map[key] = bookedHours;
-        }
+  /* ── Availability (populated from API) ─────────────────────────── */
+  // Map of "YYYY-MM-DD" → array of booked start-hours, e.g. { "2025-03-10": [8, 12] }
+  let BOOKED = {};
+
+  async function loadAvailability() {
+    try {
+      const res = await fetch('/api/v1/availability');
+      if (res.ok) {
+        BOOKED = await res.json();
+        render();
       }
-      d.setDate(d.getDate() + 1);
+    } catch (err) {
+      // Network / server not up — keep BOOKED empty, calendar remains usable
+      console.warn('Could not load availability:', err);
     }
-    return map;
-  })();
+  }
+
+  function showSlotTakenNotice() {
+    const toast = document.getElementById('slotToast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+  }
 
   /* ── Helpers ───────────────────────────────────────────────────── */
   function getMonday(d) {
@@ -1548,23 +1571,65 @@
     if (e.target === document.getElementById('overlay')) closeModal();
   });
 
-  document.getElementById('submitBtn').addEventListener('click', () => {
-    // Mark slot as booked
-    if (state.selected) {
-      const key = dkey(state.selected.date);
-      if (!BOOKED[key]) BOOKED[key] = [];
-      for (let h = state.selected.start; h < state.selected.end; h += 2)
-        BOOKED[key].push(h);
-      state.selected = null;
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    if (!state.selected) return;
+
+    const btn = document.getElementById('submitBtn');
+    const origLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '…';
+
+    const payload = {
+      date:      dkey(state.selected.date),
+      start:     state.selected.start,
+      end:       state.selected.end,
+      firstName: document.getElementById('fFirstName').value.trim(),
+      lastName:  document.getElementById('fLastName').value.trim(),
+      email:     document.getElementById('fEmail').value.trim(),
+      phone:     document.getElementById('fPhone').value.trim(),
+      vehicle:   document.getElementById('fVehicle').value.trim(),
+      notes:     document.getElementById('fNotes').value.trim(),
+    };
+
+    try {
+      const res = await fetch('/api/v1/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        // Success — show confirmation then reload availability
+        state.selected = null;
+        document.getElementById('modalForm').style.display = 'none';
+        document.getElementById('modalSuccess').classList.add('show');
+        await loadAvailability();
+        setTimeout(() => { closeModal(); }, 2800);
+      } else if (res.status === 409) {
+        // Slot was taken between page load and submit
+        closeModal();
+        await loadAvailability();   // refresh calendar with latest data
+        showSlotTakenNotice();
+        btn.disabled = false;
+        btn.textContent = origLabel;
+      } else {
+        // Unexpected server error — re-enable button so user can retry
+        btn.disabled = false;
+        btn.textContent = origLabel;
+        console.error('Booking error:', res.status, await res.text());
+      }
+    } catch (err) {
+      // Network failure — re-enable button
+      btn.disabled = false;
+      btn.textContent = origLabel;
+      console.error('Network error:', err);
     }
-    document.getElementById('modalForm').style.display = 'none';
-    document.getElementById('modalSuccess').classList.add('show');
-    setTimeout(() => { closeModal(); render(); }, 2800);
   });
 
   /* ── Init ──────────────────────────────────────────────────────── */
   initMobileDay();
-  render();
+  render();             // show calendar immediately with empty availability
+  loadAvailability();   // then populate booked slots from API
 
   // Re-render on resize so switching between desktop/mobile is seamless
   let _resizeTimer;
