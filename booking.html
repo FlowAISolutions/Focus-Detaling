@@ -95,6 +95,13 @@
     .btn-red { background: var(--accent); color: #fff; }
     .btn-red:hover { background: var(--accent-2); }
     .btn-red:active { transform: translateY(1px); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--dim);
+      border: 1px solid var(--border-2);
+    }
+    .btn-ghost:hover { color: var(--fg); border-color: var(--muted); }
+    .btn-ghost:active { transform: translateY(1px); }
 
     /* ════════════════════════════════════════════
        PAGE SHELL
@@ -944,7 +951,7 @@
       <li><a href="contact.html" data-i18n="nav-contact">Contact</a></li>
     </ul>
   </nav>
-  <a href="booking.html" class="btn btn-red" data-i18n="nav-book">Book Now</a>
+  <a href="index.html" class="btn btn-ghost">← Back</a>
   <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false">
     <span></span><span></span><span></span>
   </button>
@@ -958,7 +965,7 @@
     <li><a href="contact.html" data-i18n="nav-contact">Contact</a></li>
   </ul>
   <div class="mobile-cta">
-    <a href="booking.html" class="btn btn-red" data-i18n="nav-book">Book Now</a>
+    <a href="index.html" class="btn btn-ghost">← Back to Home</a>
   </div>
 </div>
 
