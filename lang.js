@@ -260,6 +260,7 @@
     });
 
     // HTML (for <br>, <em>, &amp; etc.)
+    // Safe: values come from the hardcoded T object only, never from user input.
     document.querySelectorAll('[data-i18n-html]').forEach(el => {
       const v = t[el.dataset.i18nHtml];
       if (v !== undefined) el.innerHTML = v;
