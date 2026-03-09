@@ -209,21 +209,44 @@
     .packages-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      border: 1px solid var(--border);
+      gap: 24px;
+      perspective: 1200px;
     }
 
     .pkg-card {
       padding: 44px 36px;
-      border-right: 1px solid var(--border);
+      border: 1px solid var(--border);
+      border-radius: 10px;
       display: flex;
       flex-direction: column;
-      transition: background 0.25s;
+      transform: perspective(900px) rotateX(6deg);
+      box-shadow:
+        0 2px 4px rgba(0,0,0,0.5),
+        0 8px 20px rgba(0,0,0,0.45),
+        0 20px 44px rgba(0,0,0,0.35);
+      transition: box-shadow 0.3s ease, transform 0.3s ease, background 0.25s;
     }
-    .pkg-card:last-child       { border-right: none; }
-    .pkg-card:not(.pkg-featured):hover { background: var(--surface); }
+    .pkg-card:hover {
+      transform: perspective(900px) rotateX(6deg) translateY(-10px) scale(1.025);
+      box-shadow:
+        0 0 0 1px var(--accent),
+        0 0 18px rgba(212,17,50,0.55),
+        0 0 40px rgba(212,17,50,0.25),
+        0 12px 30px rgba(0,0,0,0.6),
+        0 30px 60px rgba(0,0,0,0.45);
+    }
+
+    @keyframes pulse-border {
+      0%   { box-shadow: 0 0 0 1px rgba(255,255,255,0.6), 0 0 10px rgba(255,255,255,0.3), 0 12px 30px rgba(0,0,0,0.6), 0 30px 60px rgba(0,0,0,0.45); }
+      50%  { box-shadow: 0 0 0 3px rgba(255,255,255,1),   0 0 28px rgba(255,255,255,0.7), 0 12px 30px rgba(0,0,0,0.6), 0 30px 60px rgba(0,0,0,0.45); }
+      100% { box-shadow: 0 0 0 1px rgba(255,255,255,0.6), 0 0 10px rgba(255,255,255,0.3), 0 12px 30px rgba(0,0,0,0.6), 0 30px 60px rgba(0,0,0,0.45); }
+    }
 
     .pkg-featured { background: var(--accent); }
-    .pkg-featured:hover { background: #c2102e; }
+    .pkg-featured:hover {
+      transform: perspective(900px) rotateX(6deg) translateY(-10px) scale(1.025);
+      animation: pulse-border 1.4s ease-in-out infinite;
+    }
 
     .pkg-number {
       font-size: 11px;
@@ -297,9 +320,8 @@
     }
 
     @media (max-width: 960px) {
-      .packages-grid       { grid-template-columns: 1fr; }
-      .pkg-card            { border-right: none; border-bottom: 1px solid var(--border); }
-      .pkg-card:last-child { border-bottom: none; }
+      .packages-grid { grid-template-columns: 1fr; }
+      .pkg-card      { transform: none; }
     }
 
     @media (max-width: 768px) {
