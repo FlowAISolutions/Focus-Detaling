@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Book a Session — Focus Detailing</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -737,7 +737,11 @@
     ════════════════════════════════════════════ */
     @media (max-width: 768px) {
       html, body { overflow: auto; height: auto; }
-      #nav { padding: 0 20px; }
+      #nav {
+        padding: 0 20px;
+        padding-left: calc(20px + env(safe-area-inset-left));
+        padding-right: calc(20px + env(safe-area-inset-right));
+      }
       .nav-links { display: none; }
       .hamburger { display: flex; }
       #nav > a.btn { display: none; }
@@ -758,6 +762,22 @@
         border-right: none;
         border-top: 1px solid var(--border);
       }
+
+      /* Larger touch targets for week nav buttons */
+      .cal-nav-btn { height: 44px; padding: 0 16px; }
+
+      /* Modal: respect soft keyboard height */
+      .modal-card {
+        max-height: calc(100dvh - 40px);
+        max-height: calc(100svh - 40px);
+      }
+
+      /* Stack form fields vertically */
+      .field-row { grid-template-columns: 1fr; }
+
+      /* Prevent iOS Safari from zooming on input focus */
+      .modal-field input,
+      .modal-field textarea { font-size: 16px; }
     }
   </style>
 </head>
@@ -892,17 +912,17 @@
         </div>
         <div class="modal-field">
           <label for="fEmail" data-i18n="lbl-email">Email</label>
-          <input type="email" id="fEmail" autocomplete="email" data-i18n-ph="ph-email">
+          <input type="email" id="fEmail" autocomplete="email" inputmode="email" data-i18n-ph="ph-email">
           <span class="field-err" id="errEmail"></span>
         </div>
         <div class="modal-field">
           <label for="fPhone" data-i18n="lbl-phone">Phone</label>
-          <input type="tel" id="fPhone" autocomplete="tel" data-i18n-ph="ph-phone">
+          <input type="tel" id="fPhone" autocomplete="tel" inputmode="tel" data-i18n-ph="ph-phone">
           <span class="field-err" id="errPhone"></span>
         </div>
         <div class="modal-field">
           <label for="fVehicle" data-i18n="lbl-vehicle">Vehicle (Make &amp; Model)</label>
-          <input type="text" id="fVehicle" data-i18n-ph="ph-vehicle">
+          <input type="text" id="fVehicle" autocomplete="off" data-i18n-ph="ph-vehicle">
           <span class="field-err" id="errVehicle"></span>
         </div>
         <div class="modal-field">
@@ -1421,6 +1441,17 @@
     document.getElementById('prevWeek').addEventListener('click', () => goWeek(-1));
     document.getElementById('nextWeek').addEventListener('click', () => goWeek(+1));
     document.getElementById('todayBtn').addEventListener('click', goToday);
+
+    /* Swipe to navigate weeks on touch devices */
+    (function () {
+      const calBody = document.querySelector('.cal-body');
+      let touchStartX = 0;
+      calBody.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+      calBody.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 50) goWeek(dx < 0 ? 1 : -1);
+      }, { passive: true });
+    })();
 
     /* Duration filter */
     document.getElementById('durPills').addEventListener('click', e => {
