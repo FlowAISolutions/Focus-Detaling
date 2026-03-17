@@ -1040,7 +1040,7 @@
 
   async function fetchAvailability(from, to) {
     try {
-      const res = await fetch(`${API}/availability?start=${toISO(from)}&end=${toISO(to)}`);
+      const res = await fetch(`${API}/availability?start_date=${toISO(from)}&end_date=${toISO(to)}`);
       if (!res.ok) return;
       const data = await res.json();
       state.bookedSlots = data.booked_slots || [];
