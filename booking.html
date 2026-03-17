@@ -1003,7 +1003,7 @@
     return state.bookedSlots.some(b => {
       const bS = parseInt(b.start_time.split(':')[0], 10);
       const bE = parseInt(b.end_time.split(':')[0], 10);
-      return b.booking_date === dateStr && bS === startH && bE === endH;
+      return b.booking_date === dateStr && startH < bE && endH > bS;
     });
   }
 
@@ -1061,15 +1061,24 @@
       ws.onmessage = (e) => {
         try {
           const msg = JSON.parse(e.data);
-          if (msg.event !== 'slot_booked') return;
-          const dup = state.bookedSlots.some(b =>
-            b.booking_date === msg.booking_date &&
-            b.start_time   === msg.start_time   &&
-            b.end_time     === msg.end_time
-          );
-          if (!dup) {
-            state.bookedSlots.push({ booking_date: msg.booking_date, start_time: msg.start_time, end_time: msg.end_time });
-            renderCalendar();
+          if (msg.event === 'slot_booked') {
+            const dup = state.bookedSlots.some(b =>
+              b.booking_date === msg.booking_date &&
+              b.start_time   === msg.start_time   &&
+              b.end_time     === msg.end_time
+            );
+            if (!dup) {
+              state.bookedSlots.push({ booking_date: msg.booking_date, start_time: msg.start_time, end_time: msg.end_time });
+              renderCalendar();
+            }
+          } else if (msg.event === 'slot_cancelled') {
+            const before = state.bookedSlots.length;
+            state.bookedSlots = state.bookedSlots.filter(b =>
+              !(b.booking_date === msg.booking_date &&
+                b.start_time   === msg.start_time   &&
+                b.end_time     === msg.end_time)
+            );
+            if (state.bookedSlots.length !== before) renderCalendar();
           }
         } catch (_) {}
       };
@@ -1114,6 +1123,15 @@
   function renderCalendar() {
     renderWeekLabel();
     renderTimeAxis();
+
+    // Clear selection if a newly-booked overlapping slot now conflicts with it
+    if (state.selected) {
+      const selDate = toISO(state.selected.date);
+      if (isBooked(selDate, state.selected.startH, state.selected.endH)) {
+        state.selected = null;
+        renderPanel();
+      }
+    }
 
     const container = document.getElementById('calDays');
     container.innerHTML = '';

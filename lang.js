@@ -123,6 +123,13 @@
       slotBook:    '+ Book this slot',
       slotBooked:  'Booked',
       slotReserved:'✓ Reserved',
+
+      /* ── booking.html — Recurrence ───────────────────── */
+      'recur-label':    'Repeat Booking',
+      'recur-none':     'No repeat',
+      'recur-weekly':   'Weekly',
+      'recur-biweekly': 'Every 2 weeks',
+      'recur-monthly':  'Monthly',
     },
 
     hu: {
@@ -239,6 +246,13 @@
       slotBook:    '+ Foglalja le',
       slotBooked:  'Foglalt',
       slotReserved:'✓ Fenntartva',
+
+      /* ── booking.html — Recurrence ───────────────────── */
+      'recur-label':    'Ismétlődő foglalás',
+      'recur-none':     'Egyszeri',
+      'recur-weekly':   'Hetente',
+      'recur-biweekly': '2 hetente',
+      'recur-monthly':  'Havonta',
     }
   };
 
