@@ -25,7 +25,7 @@
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    html { height: 100%; }
+    html, body { height: 100%; overflow: hidden; }
 
     body {
       background: var(--bg);
@@ -34,11 +34,10 @@
       font-size: 15px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
-      height: 100%;
     }
 
     ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-thumb { background: #2a2a2a; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::selection { background: rgba(212,17,50,0.3); color: #fff; }
 
@@ -68,159 +67,697 @@
 
     .nav-links { display: flex; list-style: none; gap: 36px; }
     .nav-links a {
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      transition: color 0.2s;
+      font-size: 12px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--fg); }
 
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--font);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      padding: 11px 22px;
-      border: none;
-      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.13em; text-transform: uppercase;
+      padding: 11px 22px; border: none; cursor: pointer;
       transition: background 0.2s, transform 0.15s;
     }
     .btn-red { background: var(--accent); color: #fff; }
     .btn-red:hover { background: var(--accent-2); }
     .btn-red:active { transform: translateY(1px); }
     .btn-ghost {
-      background: transparent;
-      color: var(--dim);
+      background: transparent; color: var(--dim);
       border: 1px solid var(--border-2);
     }
     .btn-ghost:hover { color: var(--fg); border-color: var(--muted); }
     .btn-ghost:active { transform: translateY(1px); }
 
-    /* ════════════════════════════════════════════
-       KOALENDAR EMBED
-    ════════════════════════════════════════════ */
-    .koalendar-wrap {
-      margin-top: 64px;
-      min-height: calc(100vh - 64px);
-      background: var(--bg);
-    }
-
-    #inline-widget-meet-with-mate-4 {
-      width: 100%;
-      min-height: calc(100vh - 64px);
-    }
-
-    /* ── Lang Toggle ──────────────────────────────────────────── */
-    .lang-toggle {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    /* ── Lang Toggle ─────────────────────────────── */
+    .lang-toggle { display: flex; align-items: center; gap: 8px; }
     .lang-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.2s;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+      cursor: pointer; user-select: none; transition: color 0.2s;
     }
     .lang-toggle[data-lang="en"] .lang-label.lang-en,
     .lang-toggle[data-lang="hu"] .lang-label.lang-hu { color: var(--fg); }
     .lang-switch {
-      position: relative;
-      width: 40px;
-      height: 22px;
-      background: var(--lift);
-      border: 1px solid var(--border-2);
-      border-radius: 11px;
-      cursor: pointer;
-      padding: 0;
+      position: relative; width: 40px; height: 22px;
+      background: var(--lift); border: 1px solid var(--border-2);
+      border-radius: 11px; cursor: pointer; padding: 0;
       transition: background 0.2s, border-color 0.2s;
     }
     .lang-switch:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
     .lang-switch[aria-checked="true"] { background: var(--accent); border-color: var(--accent); }
     .lang-thumb {
-      position: absolute;
-      top: 2px; left: 2px;
-      width: 16px; height: 16px;
-      background: var(--fg);
-      border-radius: 50%;
-      pointer-events: none;
+      position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; background: var(--fg);
+      border-radius: 50%; pointer-events: none;
       transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .lang-switch[aria-checked="true"] .lang-thumb { transform: translateX(18px); }
 
-    /* ── Hamburger ─────────────────────────────────────────────── */
+    /* ── Hamburger ───────────────────────────────── */
     .hamburger {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      gap: 5px;
-      width: 40px;
-      height: 40px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      padding: 9px;
-      grid-column: 3;
-      justify-self: end;
+      display: none; flex-direction: column; justify-content: center;
+      gap: 5px; width: 40px; height: 40px; background: transparent;
+      border: none; cursor: pointer; padding: 9px;
+      grid-column: 3; justify-self: end;
     }
     .hamburger span {
-      display: block;
-      width: 22px;
-      height: 1.5px;
-      background: var(--fg);
-      transition: transform 0.22s, opacity 0.18s;
-      transform-origin: center;
+      display: block; width: 22px; height: 1.5px; background: var(--fg);
+      transition: transform 0.22s, opacity 0.18s; transform-origin: center;
     }
     .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
     .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
     .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-    /* ── Mobile Nav ─────────────────────────────────────────────── */
+    /* ── Mobile Nav ──────────────────────────────── */
     .mobile-nav {
-      display: none;
-      position: fixed;
-      top: 64px; left: 0; right: 0; bottom: 0;
-      background: var(--bg);
-      z-index: 198;
-      flex-direction: column;
-      align-items: stretch;
-      overflow-y: auto;
+      display: none; position: fixed; top: 64px; left: 0; right: 0; bottom: 0;
+      background: var(--bg); z-index: 198;
+      flex-direction: column; align-items: stretch; overflow-y: auto;
     }
     .mobile-nav.open { display: flex; }
     .mobile-links { list-style: none; flex: 1; }
     .mobile-links li { border-bottom: 1px solid var(--border); }
     .mobile-links a {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 20px 24px;
-      transition: color 0.2s, background 0.2s;
+      display: block; font-size: 13px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      padding: 20px 24px; transition: color 0.2s, background 0.2s;
     }
     .mobile-links a:hover { color: var(--fg); background: var(--surface); }
     .mobile-cta { padding: 24px; border-top: 1px solid var(--border); }
     .mobile-cta .btn { width: 100%; justify-content: center; }
 
-    /* ── Mobile layout overrides ─────────────────────────────────── */
-    @media (max-width: 768px) {
-      html, body { height: auto; }
+    /* ════════════════════════════════════════════
+       BOOKING PAGE LAYOUT
+    ════════════════════════════════════════════ */
+    .booking-page {
+      position: fixed;
+      inset: 64px 0 0 0;
+      display: flex;
+      overflow: hidden;
+    }
 
-      #nav         { padding: 0 20px; }
-      .nav-links   { display: none; }
-      .hamburger   { display: flex; }
+    /* ── Calendar pane ───────────────────────────── */
+    .cal-pane {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Week navigation header */
+    .cal-header {
+      height: 48px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px 0 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .week-label {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      color: var(--fg);
+      padding-left: 8px;
+      white-space: nowrap;
+    }
+
+    .cal-nav-btn {
+      padding: 6px 14px;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      height: 32px;
+      flex-shrink: 0;
+    }
+    .cal-nav-btn.today-btn {
+      color: var(--accent);
+      border-color: rgba(212,17,50,0.3);
+    }
+    .cal-nav-btn.today-btn:hover {
+      border-color: var(--accent);
+      background: rgba(212,17,50,0.07);
+    }
+
+    /* Scrollable body: time axis + day columns */
+    .cal-body {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: auto;
+      display: flex;
+      min-height: 0;
+    }
+
+    /* Time axis */
+    .cal-time-axis {
+      flex-shrink: 0;
+      width: 52px;
+      padding-top: 48px; /* align with day headers */
+    }
+
+    .time-row {
+      height: 60px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding: 5px 8px 0 0;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    /* Day columns container */
+    .cal-days {
+      flex: 1;
+      min-width: 540px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    /* Individual day column */
+    .cal-day {
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Day header */
+    .cal-day-hd {
+      height: 48px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg);
+    }
+
+    .day-name {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .day-num {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--fg);
+      line-height: 1;
+    }
+
+    .cal-day--today .day-num {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Day body: the hourly slot grid */
+    .cal-day-body {
+      position: relative;
+      height: 600px; /* 10 hours × 60px */
+      flex-shrink: 0;
+    }
+
+    /* Horizontal hour lines */
+    .cal-day-body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        var(--border) 0, var(--border) 1px,
+        transparent 1px, transparent 60px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Slot blocks ──────────────────────────────── */
+    .slot-blk {
+      position: absolute;
+      z-index: 1;
+      border-radius: 2px;
+      padding: 5px 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      transition: background-color 0.12s, border-color 0.12s;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .slot-blk__time {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+    }
+    .slot-blk__svc {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* Narrower slots (multi-track mode) → scale down text */
+    .slot-blk--narrow .slot-blk__time { font-size: 9px; }
+    .slot-blk--narrow .slot-blk__svc  { display: none; }
+
+    /* Available */
+    .slot-blk--avail {
+      background: var(--lift);
+      border: 1px solid #333;
+      color: var(--fg);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .slot-blk--avail .slot-blk__svc { color: var(--dim); }
+    .slot-blk--avail:hover {
+      background: #252525;
+      border-color: rgba(212,17,50,0.5);
+      box-shadow: inset 0 1px 0 rgba(212,17,50,0.05);
+    }
+    .slot-blk--avail:hover .slot-blk__svc { color: rgba(212,17,50,0.7); }
+
+    /* Selected */
+    .slot-blk--sel {
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      color: #fff;
+      cursor: default;
+    }
+    .slot-blk--sel .slot-blk__svc { color: rgba(255,255,255,0.7); }
+
+    /* Booked (taken) */
+    .slot-blk--booked {
+      background: rgba(212,17,50,0.08);
+      border: 1px solid rgba(212,17,50,0.22);
+      color: rgba(212,17,50,0.45);
+      cursor: not-allowed;
+    }
+    .slot-blk--booked .slot-blk__svc { color: rgba(212,17,50,0.3); }
+
+    /* Past */
+    .slot-blk--past {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: not-allowed;
+      opacity: 0.28;
+    }
+
+    /* ════════════════════════════════════════════
+       RIGHT PANEL
+    ════════════════════════════════════════════ */
+    .slot-panel {
+      width: 264px;
+      flex-shrink: 0;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      background: var(--bg-2);
+    }
+
+    /* Top section */
+    .panel-top {
+      padding: 24px 20px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .panel-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .panel-title {
+      font-size: 22px;
+      font-weight: 300;
+      line-height: 1.15;
+      color: var(--fg);
+      margin-bottom: 8px;
+    }
+    .panel-hint {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* Panel sections */
+    .panel-section {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    /* Duration pills */
+    .dur-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+    .dur-pill {
+      font-family: var(--font);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 7px 8px;
+      background: transparent;
+      border: 1px solid var(--border-2);
+      color: var(--dim);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      text-align: center;
+    }
+    .dur-pill:hover { color: var(--fg); border-color: var(--muted); }
+    .dur-pill--active {
+      background: var(--lift);
+      border-color: #383838;
+      color: var(--fg);
+    }
+
+    /* Selected slot details */
+    .sel-details {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sel-date-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .sel-date-val {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--fg);
+      margin-bottom: 6px;
+    }
+    .sel-time-val {
+      font-size: 30px;
+      font-weight: 300;
+      color: var(--fg);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .sel-svc-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(212,17,50,0.1);
+      border: 1px solid rgba(212,17,50,0.25);
+      padding: 4px 10px;
+      border-radius: 2px;
+    }
+
+    /* Recurrence select */
+    .recur-select {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--fg);
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      padding: 9px 28px 9px 12px;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: border-color 0.15s;
+    }
+    .recur-select:focus { outline: none; border-color: var(--accent); }
+    .recur-select option { background: var(--surface); color: var(--fg); }
+
+    /* Confirm button area */
+    .panel-confirm {
+      padding: 16px 20px;
+      margin-top: auto;
+    }
+    .confirm-btn {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      padding: 14px 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .confirm-btn:hover { background: var(--accent-2); }
+    .confirm-btn:active { transform: translateY(1px); }
+
+    /* ════════════════════════════════════════════
+       MODAL
+    ════════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(12,12,12,0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay[hidden] { display: none; }
+
+    .modal-card {
+      width: 100%;
+      max-width: 520px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border-2);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.75), 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .modal-hd {
+      padding: 24px 28px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-eyebrow-txt {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .modal-title-txt {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--fg);
+      margin-bottom: 6px;
+    }
+    .modal-summary-line {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    .modal-body { padding: 20px 28px 8px; }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+    .modal-field label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .modal-field input,
+    .modal-field textarea {
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--fg);
+      background: var(--lift);
+      border: 1px solid var(--border-2);
+      padding: 10px 12px;
+      border-radius: 2px;
+      transition: border-color 0.15s;
+      resize: none;
+    }
+    .modal-field input::placeholder,
+    .modal-field textarea::placeholder { color: var(--muted); }
+    .modal-field input:focus,
+    .modal-field textarea:focus { outline: none; border-color: var(--accent); }
+    .modal-field input.is-err,
+    .modal-field textarea.is-err { border-color: var(--accent); }
+    .field-err {
+      font-size: 11px;
+      color: var(--accent);
+      min-height: 13px;
+      line-height: 1;
+    }
+
+    .global-err {
+      margin: 0 28px 12px;
+      padding: 10px 14px;
+      background: rgba(212,17,50,0.1);
+      border: 1px solid rgba(212,17,50,0.3);
+      font-size: 12px;
+      color: var(--accent);
+      border-radius: 2px;
+      line-height: 1.5;
+    }
+    .global-err[hidden] { display: none; }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      padding: 4px 28px 24px;
+    }
+    .modal-actions .btn { flex: 1; justify-content: center; }
+    .btn-submit {
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      padding: 13px 20px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      flex: 2;
+      border-radius: 2px;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover { background: var(--accent-2); }
+    .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* Modal success */
+    .modal-success {
+      padding: 52px 28px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .success-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(212,17,50,0.1);
+      border: 1px solid rgba(212,17,50,0.3);
+      color: var(--accent);
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .success-ttl {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--fg);
+      margin-bottom: 10px;
+    }
+    .success-msg {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 340px;
+      margin-bottom: 28px;
+    }
+
+    /* ════════════════════════════════════════════
+       MOBILE
+    ════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      html, body { overflow: auto; height: auto; }
+      #nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
       #nav > a.btn { display: none; }
+
+      .booking-page {
+        position: relative;
+        inset: unset;
+        margin-top: 64px;
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+      }
+      .cal-pane { overflow: visible; height: auto; }
+      .cal-body { overflow-x: auto; height: auto; }
+      .cal-day-body { min-height: 540px; }
+      .slot-panel {
+        width: 100%;
+        border-right: none;
+        border-top: 1px solid var(--border);
+      }
     }
   </style>
 </head>
@@ -228,7 +765,6 @@
 
 <!-- NAV -->
 <header id="nav">
-  <!-- Language toggle (grid col 1) -->
   <div class="lang-toggle" id="langToggle" data-lang="en">
     <span class="lang-label lang-en">EN</span>
     <button class="lang-switch" id="langSwitch" role="switch" aria-checked="false" aria-label="Switch language">
@@ -262,36 +798,675 @@
   </div>
 </div>
 
-<!-- KOALENDAR BOOKING EMBED -->
-<div class="koalendar-wrap">
-  <div id="inline-widget-meet-with-mate-4"></div>
+<!-- BOOKING PAGE -->
+<div class="booking-page">
+
+  <!-- Left: Details panel -->
+  <aside class="slot-panel">
+
+    <!-- Top header (always visible) -->
+    <div class="panel-top">
+      <div class="panel-eyebrow">Focus Detailing</div>
+      <div class="panel-title" id="panelTitle">Book Your<br>Detail</div>
+      <p class="panel-hint" id="panelHint">Select an available slot on the calendar to continue.</p>
+    </div>
+
+    <!-- Duration filter (always visible) -->
+    <div class="panel-section">
+      <div class="section-label" data-i18n="booking-duration">Session Duration</div>
+      <div class="dur-pills" id="durPills">
+        <button class="dur-pill" data-dur="2h" data-i18n="dur-classic">Classic</button>
+        <button class="dur-pill" data-dur="4h" data-i18n="dur-detail">Detail</button>
+        <button class="dur-pill" data-dur="day" data-i18n="dur-full">Full Detail</button>
+      </div>
+    </div>
+
+    <!-- Selected slot details (shown when slot is chosen) -->
+    <div class="sel-details" id="selDetails" style="display:none">
+      <div class="sel-date-label" data-i18n="sum-date">Date</div>
+      <div class="sel-date-val" id="selDate">—</div>
+      <div class="sel-time-val" id="selTime">—</div>
+      <div class="sel-svc-badge" id="selSvc">—</div>
+    </div>
+
+    <!-- Recurrence (shown when slot is chosen) -->
+    <div class="panel-section" id="recurrSection" style="display:none">
+      <div class="section-label" data-i18n="recur-label">Repeat Booking</div>
+      <select class="recur-select" id="recurrenceSelect">
+        <option value="" data-i18n="recur-none">No repeat</option>
+        <option value="WEEKLY"   data-i18n="recur-weekly">Weekly</option>
+        <option value="BIWEEKLY" data-i18n="recur-biweekly">Every 2 weeks</option>
+        <option value="MONTHLY"  data-i18n="recur-monthly">Monthly</option>
+      </select>
+    </div>
+
+    <!-- Confirm (shown when slot is chosen) -->
+    <div class="panel-confirm" id="confirmSection" style="display:none">
+      <button class="confirm-btn" id="confirmBtn" data-i18n="sum-confirm">
+        Confirm &amp; Book
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- Right: Calendar pane -->
+  <div class="cal-pane">
+    <div class="cal-header">
+      <button class="btn btn-ghost cal-nav-btn" id="prevWeek">← Prev</button>
+      <span class="week-label" id="weekLabel">—</span>
+      <button class="btn btn-ghost cal-nav-btn" id="nextWeek">Next →</button>
+      <button class="btn btn-ghost cal-nav-btn today-btn" id="todayBtn" data-i18n="today-btn">Today</button>
+    </div>
+    <div class="cal-body">
+      <div class="cal-time-axis" id="timeAxis"></div>
+      <div class="cal-days" id="calDays"></div>
+    </div>
+  </div>
+
 </div>
 
-<script>window.Koalendar=window.Koalendar||function(){(Koalendar.props=Koalendar.props||[]).push(arguments)};</script>
-<script async src="https://koalendar.com/assets/widget.js"></script>
-<script>Koalendar('inline', {"url":"https://koalendar.com/e/meet-with-mate-4","selector":"#inline-widget-meet-with-mate-4"});</script>
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="bookingModal" hidden>
+  <div class="modal-card">
+
+    <div class="modal-hd">
+      <div class="modal-eyebrow-txt" data-i18n="modal-eyebrow">Book an Appointment</div>
+      <div class="modal-title-txt" data-i18n="modal-title">Reserve Your Slot</div>
+      <div class="modal-summary-line" id="modalSummary"></div>
+    </div>
+
+    <!-- Form view -->
+    <div id="modalFormWrap">
+      <div class="modal-body">
+        <div class="field-row">
+          <div class="modal-field">
+            <label for="fFirst" data-i18n="lbl-first">First Name</label>
+            <input type="text" id="fFirst" autocomplete="given-name" data-i18n-ph="ph-first">
+            <span class="field-err" id="errFirst"></span>
+          </div>
+          <div class="modal-field">
+            <label for="fLast" data-i18n="lbl-last">Last Name</label>
+            <input type="text" id="fLast" autocomplete="family-name" data-i18n-ph="ph-last">
+            <span class="field-err" id="errLast"></span>
+          </div>
+        </div>
+        <div class="modal-field">
+          <label for="fEmail" data-i18n="lbl-email">Email</label>
+          <input type="email" id="fEmail" autocomplete="email" data-i18n-ph="ph-email">
+          <span class="field-err" id="errEmail"></span>
+        </div>
+        <div class="modal-field">
+          <label for="fPhone" data-i18n="lbl-phone">Phone</label>
+          <input type="tel" id="fPhone" autocomplete="tel" data-i18n-ph="ph-phone">
+          <span class="field-err" id="errPhone"></span>
+        </div>
+        <div class="modal-field">
+          <label for="fVehicle" data-i18n="lbl-vehicle">Vehicle (Make &amp; Model)</label>
+          <input type="text" id="fVehicle" data-i18n-ph="ph-vehicle">
+          <span class="field-err" id="errVehicle"></span>
+        </div>
+        <div class="modal-field">
+          <label for="fNotes" data-i18n="lbl-notes">Notes (optional)</label>
+          <textarea id="fNotes" rows="3" data-i18n-ph="ph-notes"></textarea>
+        </div>
+      </div>
+      <div class="global-err" id="errGlobal" hidden></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="cancelBtn" type="button" data-i18n="btn-cancel">Cancel</button>
+        <button class="btn-submit" id="submitBtn" type="button" data-i18n="btn-submit">Confirm Booking</button>
+      </div>
+    </div>
+
+    <!-- Success view -->
+    <div id="modalSuccessWrap" style="display:none">
+      <div class="modal-success">
+        <div class="success-icon">✓</div>
+        <div class="success-ttl" data-i18n="success-title">Booking Received!</div>
+        <p class="success-msg" data-i18n="success-sub">We'll confirm your appointment within 24 hours via email. Thank you for choosing Focus Detailing.</p>
+        <button class="btn btn-ghost" id="successClose">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <script src="lang.js"></script>
 <script>
-  (function () {
-    const hamburger = document.getElementById('hamburger');
-    const mobileNav = document.getElementById('mobile-nav');
-    if (!hamburger || !mobileNav) return;
-    hamburger.addEventListener('click', () => {
-      const open = hamburger.classList.toggle('open');
-      hamburger.setAttribute('aria-expanded', String(open));
-      mobileNav.setAttribute('aria-hidden', String(!open));
-      mobileNav.classList.toggle('open');
+(function () {
+  'use strict';
+
+  const _isProd = window.location.hostname !== 'localhost';
+  const API     = _isProd
+    ? 'https://web-production-06676.up.railway.app/api/v1'
+    : 'http://localhost:8000/api/v1';
+  const WS_URL  = _isProd
+    ? 'wss://web-production-06676.up.railway.app/ws/availability'
+    : 'ws://localhost:8000/ws/availability';
+  const ROW_H   = 60;   // px per hour
+  const GRID_S  = 9;    // grid start hour (09:00)
+  const GRID_E  = 18;   // grid end hour   (18:00)
+  const HOURS   = GRID_E - GRID_S; // 10
+
+  /* All bookable slot definitions — must match backend VALID_SLOTS */
+  const ALL_SLOTS = [
+    { start: 9,  end: 11, service: 'classic', dur: '2h'  },
+    { start: 11, end: 13, service: 'classic', dur: '2h'  },
+    { start: 13, end: 15, service: 'classic', dur: '2h'  },
+    { start: 15, end: 17, service: 'classic', dur: '2h'  },
+    { start: 9,  end: 13, service: 'detail',  dur: '4h'  },
+    { start: 13, end: 17, service: 'detail',  dur: '4h'  },
+    { start: 9,  end: 18, service: 'full',    dur: 'day' },
+  ];
+
+  /* Sub-column index per service when "All" filter is active */
+  const TRACK     = { classic: 0, detail: 1, full: 2 };
+  const TRACK_N   = 3;
+  const TRACK_PAD = 2; // px gap on each side of a slot block
+
+  let state = {
+    weekStart:   null,
+    bookedSlots: [],   // [{booking_date: 'YYYY-MM-DD', start_time: 'HH:MM:SS', end_time: 'HH:MM:SS'}]
+    selected:    null, // {date, startH, endH, service, dur}
+    durFilter:   null, // null | '2h' | '4h' | 'day'
+    recurrence:  '',   // '' | 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY'
+    ws:          null,
+    wsBackoff:   2000,
+  };
+
+  /* ─── Helpers ───────────────────────────────────────────────── */
+
+  function toISO(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  function addDays(d, n) {
+    const r = new Date(d);
+    r.setDate(r.getDate() + n);
+    return r;
+  }
+
+  function monday(d) {
+    const r = new Date(d);
+    r.setHours(0, 0, 0, 0);
+    const dow = r.getDay();
+    r.setDate(r.getDate() + (dow === 0 ? -6 : 1 - dow));
+    return r;
+  }
+
+  function isPast(date, endH) {
+    const cutoff = new Date(date);
+    cutoff.setHours(endH, 0, 0, 0);
+    return cutoff <= new Date();
+  }
+
+  function isBooked(dateStr, startH, endH) {
+    return state.bookedSlots.some(b => {
+      const bS = parseInt(b.start_time.split(':')[0], 10);
+      const bE = parseInt(b.end_time.split(':')[0], 10);
+      return b.booking_date === dateStr && bS === startH && bE === endH;
     });
-    mobileNav.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => {
-        hamburger.classList.remove('open');
-        hamburger.setAttribute('aria-expanded', 'false');
-        mobileNav.setAttribute('aria-hidden', 'true');
-        mobileNav.classList.remove('open');
+  }
+
+  function t(key) {
+    const lang = (window.FD_currentLang && window.FD_currentLang()) || 'en';
+    return ((window.FD_TRANSLATIONS || {})[lang] || {})[key] || key;
+  }
+
+  function tr() {
+    const lang = (window.FD_currentLang && window.FD_currentLang()) || 'en';
+    return (window.FD_TRANSLATIONS || {})[lang] || (window.FD_TRANSLATIONS || {}).en || {};
+  }
+
+  function fmtTime(h) {
+    return `${String(h).padStart(2,'0')}:00`;
+  }
+
+  function fmtDate(d) {
+    const trans = tr();
+    const days   = trans.dayNames   || ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const months = trans.monthNames || ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const dow = d.getDay();
+    return `${days[dow === 0 ? 6 : dow - 1]}, ${months[d.getMonth()]} ${d.getDate()}`;
+  }
+
+  function svcLabel(service) {
+    if (service === 'classic') return t('dur-classic') || 'Classic';
+    if (service === 'detail')  return t('dur-detail')  || 'Detail';
+    if (service === 'full')    return t('dur-full')    || 'Full Detail';
+    return service;
+  }
+
+  /* ─── Fetch availability ────────────────────────────────────── */
+
+  async function fetchAvailability(from, to) {
+    try {
+      const res = await fetch(`${API}/availability?start=${toISO(from)}&end=${toISO(to)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      state.bookedSlots = data.booked_slots || [];
+      renderCalendar();
+    } catch (e) {
+      /* Backend offline in dev — render with empty booked slots */
+    }
+  }
+
+  /* ─── WebSocket ─────────────────────────────────────────────── */
+
+  function wsConnect() {
+    if (state.ws) return;
+    try {
+      const ws = new WebSocket(WS_URL);
+      state.ws = ws;
+      ws.onopen = () => { state.wsBackoff = 2000; };
+      ws.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.event !== 'slot_booked') return;
+          const dup = state.bookedSlots.some(b =>
+            b.booking_date === msg.booking_date &&
+            b.start_time   === msg.start_time   &&
+            b.end_time     === msg.end_time
+          );
+          if (!dup) {
+            state.bookedSlots.push({ booking_date: msg.booking_date, start_time: msg.start_time, end_time: msg.end_time });
+            renderCalendar();
+          }
+        } catch (_) {}
+      };
+      ws.onclose = () => {
+        state.ws = null;
+        setTimeout(() => {
+          state.wsBackoff = Math.min(state.wsBackoff * 2, 30000);
+          wsConnect();
+        }, state.wsBackoff);
+      };
+    } catch (_) {}
+  }
+
+  /* ─── Render week label ─────────────────────────────────────── */
+
+  function renderWeekLabel() {
+    const ws = state.weekStart;
+    const we = addDays(ws, 4);
+    const trans  = tr();
+    const months = trans.monthNames || ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const sameM  = ws.getMonth() === we.getMonth();
+    document.getElementById('weekLabel').textContent = sameM
+      ? `${months[ws.getMonth()]} ${ws.getDate()}–${we.getDate()}, ${ws.getFullYear()}`
+      : `${months[ws.getMonth()]} ${ws.getDate()} – ${months[we.getMonth()]} ${we.getDate()}, ${ws.getFullYear()}`;
+  }
+
+  /* ─── Render time axis ──────────────────────────────────────── */
+
+  function renderTimeAxis() {
+    const axis = document.getElementById('timeAxis');
+    axis.innerHTML = '';
+    for (let h = GRID_S; h < GRID_E; h++) {
+      const row = document.createElement('div');
+      row.className = 'time-row';
+      row.textContent = fmtTime(h);
+      axis.appendChild(row);
+    }
+  }
+
+  /* ─── Render full calendar ──────────────────────────────────── */
+
+  function renderCalendar() {
+    renderWeekLabel();
+    renderTimeAxis();
+
+    const container = document.getElementById('calDays');
+    container.innerHTML = '';
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const trans    = tr();
+    const dayNames = trans.dayNames || ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+    /* Which slots to render based on current filter */
+    const slots = state.durFilter === null
+      ? []
+      : ALL_SLOTS.filter(s => s.dur === state.durFilter);
+
+    /* Is it single service type? → use full column width */
+    const uniqueDurs  = [...new Set(slots.map(s => s.dur))];
+    const singleTrack = uniqueDurs.length === 1;
+
+    for (let di = 0; di < 5; di++) {
+      const date    = addDays(state.weekStart, di);
+      const dateStr = toISO(date);
+      const isToday = date.getTime() === today.getTime();
+
+      /* Column */
+      const col  = document.createElement('div');
+      col.className = 'cal-day' + (isToday ? ' cal-day--today' : '');
+
+      /* Day header */
+      const hd   = document.createElement('div');
+      hd.className = 'cal-day-hd';
+      hd.innerHTML = `<span class="day-name">${dayNames[di]}</span><span class="day-num">${date.getDate()}</span>`;
+      col.appendChild(hd);
+
+      /* Day body */
+      const body = document.createElement('div');
+      body.className = 'cal-day-body';
+
+      slots.forEach(slotDef => {
+        const past   = isPast(date, slotDef.end);
+        const booked = isBooked(dateStr, slotDef.start, slotDef.end);
+        const isSel  = state.selected &&
+                       toISO(state.selected.date) === dateStr &&
+                       state.selected.startH === slotDef.start &&
+                       state.selected.endH   === slotDef.end;
+
+        let cls = 'slot-blk--avail';
+        if (past)   cls = 'slot-blk--past';
+        if (booked) cls = 'slot-blk--booked';
+        if (isSel)  cls = 'slot-blk--sel';
+
+        /* Vertical position */
+        const top    = (slotDef.start - GRID_S) * ROW_H + TRACK_PAD;
+        const height = (slotDef.end - slotDef.start) * ROW_H - TRACK_PAD * 2;
+
+        /* Horizontal position: full width or sub-track */
+        let left, width;
+        if (singleTrack) {
+          left  = `${TRACK_PAD}px`;
+          width = `calc(100% - ${TRACK_PAD * 2}px)`;
+        } else {
+          const pct = 100 / TRACK_N;
+          const ti  = TRACK[slotDef.service];
+          left  = `calc(${ti * pct}% + ${TRACK_PAD}px)`;
+          width = `calc(${pct}% - ${TRACK_PAD * 2}px)`;
+        }
+
+        const narrowClass = singleTrack ? '' : ' slot-blk--narrow';
+        const blk = document.createElement('div');
+        blk.className = `slot-blk ${cls}${narrowClass}`;
+        blk.style.top    = `${top}px`;
+        blk.style.height = `${height}px`;
+        blk.style.left   = left;
+        blk.style.width  = width;
+        /* In narrow (multi-track) mode, show abbreviated time; full time otherwise */
+        const timeText = singleTrack
+          ? `${fmtTime(slotDef.start)} – ${fmtTime(slotDef.end)}`
+          : `${String(slotDef.start).padStart(2,'0')}–${String(slotDef.end).padStart(2,'0')}`;
+        blk.innerHTML = `
+          <span class="slot-blk__time">${timeText}</span>
+          <span class="slot-blk__svc">${svcLabel(slotDef.service)}</span>
+        `;
+
+        if (!past && !booked && !isSel) {
+          blk.addEventListener('click', () => selectSlot(date, slotDef.start, slotDef.end, slotDef.service, slotDef.dur));
+        }
+
+        body.appendChild(blk);
+      });
+
+      col.appendChild(body);
+      container.appendChild(col);
+    }
+  }
+
+  /* ─── Select a slot ─────────────────────────────────────────── */
+
+  function selectSlot(date, startH, endH, service, dur) {
+    state.selected = { date, startH, endH, service, dur };
+    renderCalendar();
+    renderPanel();
+  }
+
+  /* ─── Render right panel ────────────────────────────────────── */
+
+  function renderPanel() {
+    const sel = state.selected;
+
+    document.getElementById('panelHint').style.display     = sel ? 'none'  : '';
+    document.getElementById('selDetails').style.display    = sel ? 'block' : 'none';
+    document.getElementById('recurrSection').style.display = sel ? 'block' : 'none';
+    document.getElementById('confirmSection').style.display= sel ? 'block' : 'none';
+
+    if (sel) {
+      document.getElementById('panelTitle').innerHTML = 'Your<br>Selection';
+      document.getElementById('selDate').textContent  = fmtDate(sel.date);
+      document.getElementById('selTime').textContent  = `${fmtTime(sel.startH)} – ${fmtTime(sel.endH)}`;
+      document.getElementById('selSvc').textContent   = svcLabel(sel.service);
+    } else {
+      document.getElementById('panelTitle').innerHTML = 'Book Your<br>Detail';
+    }
+  }
+
+  /* ─── Duration filter ───────────────────────────────────────── */
+
+  function setDurFilter(dur) {
+    state.durFilter = dur;
+    /* Clear selection if it no longer matches the filter */
+    if (state.selected && state.selected.dur !== dur) {
+      state.selected = null;
+    }
+    document.querySelectorAll('.dur-pill').forEach(btn => {
+      btn.classList.toggle('dur-pill--active', btn.dataset.dur === dur);
+    });
+    renderCalendar();
+    renderPanel();
+  }
+
+  /* ─── Modal ─────────────────────────────────────────────────── */
+
+  function openModal() {
+    const sel = state.selected;
+    if (!sel) return;
+
+    const lang = (window.FD_currentLang && window.FD_currentLang()) || 'en';
+    document.getElementById('modalSummary').textContent =
+      `${fmtDate(sel.date)} · ${fmtTime(sel.startH)}–${fmtTime(sel.endH)} · ${svcLabel(sel.service)}`;
+
+    document.getElementById('modalFormWrap').style.display    = 'block';
+    document.getElementById('modalSuccessWrap').style.display = 'none';
+    document.getElementById('errGlobal').hidden = true;
+    clearErrors();
+
+    document.getElementById('bookingModal').removeAttribute('hidden');
+    setTimeout(() => document.getElementById('fFirst').focus(), 60);
+  }
+
+  function closeModal() {
+    document.getElementById('bookingModal').setAttribute('hidden', '');
+  }
+
+  function clearErrors() {
+    ['fFirst','fLast','fEmail','fPhone','fVehicle'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('is-err');
+    });
+    ['errFirst','errLast','errEmail','errPhone','errVehicle'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = '';
+    });
+  }
+
+  function setFieldErr(fieldId, errId, msg) {
+    document.getElementById(fieldId).classList.add('is-err');
+    document.getElementById(errId).textContent = msg;
+  }
+
+  async function submitBooking() {
+    clearErrors();
+    const sel = state.selected;
+    if (!sel) return;
+
+    const first   = document.getElementById('fFirst').value.trim();
+    const last    = document.getElementById('fLast').value.trim();
+    const email   = document.getElementById('fEmail').value.trim();
+    const phone   = document.getElementById('fPhone').value.trim();
+    const vehicle = document.getElementById('fVehicle').value.trim();
+    const notes   = document.getElementById('fNotes').value.trim();
+
+    let ok = true;
+    if (!first)   { setFieldErr('fFirst', 'errFirst', 'Required'); ok = false; }
+    if (!last)    { setFieldErr('fLast',  'errLast',  'Required'); ok = false; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setFieldErr('fEmail', 'errEmail', 'Valid email required'); ok = false;
+    }
+    if (!phone)   { setFieldErr('fPhone', 'errPhone', 'Required'); ok = false; }
+    if (!vehicle) { setFieldErr('fVehicle', 'errVehicle', 'Required'); ok = false; }
+    if (!ok) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = '…';
+
+    const payload = {
+      firstName: first,
+      lastName:  last,
+      email,
+      phone,
+      vehicle,
+      date:  toISO(sel.date),
+      start: sel.startH,
+      end:   sel.endH,
+    };
+    if (notes)             payload.notes          = notes;
+    if (state.recurrence)  payload.recurrence_rule = state.recurrence;
+
+    try {
+      const res = await fetch(`${API}/bookings`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        /* Optimistically mark the slot as booked locally */
+        state.bookedSlots.push({
+          booking_date: toISO(sel.date),
+          start_time:   `${String(sel.startH).padStart(2,'0')}:00:00`,
+          end_time:     `${String(sel.endH).padStart(2,'0')}:00:00`,
+        });
+        state.selected = null;
+        renderCalendar();
+        renderPanel();
+        document.getElementById('modalFormWrap').style.display    = 'none';
+        document.getElementById('modalSuccessWrap').style.display = 'block';
+      } else {
+        const data = await res.json().catch(() => null);
+        let msg = 'Booking failed. Please try again.';
+        if (data?.detail) {
+          msg = Array.isArray(data.detail)
+            ? data.detail.map(d => d.msg || d).join('; ')
+            : String(data.detail);
+        }
+        const errGlobal = document.getElementById('errGlobal');
+        errGlobal.textContent = msg;
+        errGlobal.hidden = false;
+      }
+    } catch (_) {
+      const errGlobal = document.getElementById('errGlobal');
+      errGlobal.textContent = 'Network error. Please check your connection.';
+      errGlobal.hidden = false;
+    } finally {
+      btn.textContent = t('btn-submit') || 'Confirm Booking';
+      btn.disabled = false;
+    }
+  }
+
+  /* ─── Week navigation ───────────────────────────────────────── */
+
+  function goWeek(delta) {
+    state.weekStart = addDays(state.weekStart, delta * 7);
+    state.selected  = null;
+    fetchAvailability(state.weekStart, addDays(state.weekStart, 4));
+    renderCalendar();
+    renderPanel();
+  }
+
+  function goToday() {
+    state.weekStart = monday(new Date());
+    state.selected  = null;
+    fetchAvailability(state.weekStart, addDays(state.weekStart, 4));
+    renderCalendar();
+    renderPanel();
+  }
+
+  /* ─── Init ──────────────────────────────────────────────────── */
+
+  function init() {
+    state.weekStart = monday(new Date());
+
+    renderCalendar();
+    renderPanel();
+    fetchAvailability(state.weekStart, addDays(state.weekStart, 4));
+    wsConnect();
+
+    /* Week nav */
+    document.getElementById('prevWeek').addEventListener('click', () => goWeek(-1));
+    document.getElementById('nextWeek').addEventListener('click', () => goWeek(+1));
+    document.getElementById('todayBtn').addEventListener('click', goToday);
+
+    /* Duration filter */
+    document.getElementById('durPills').addEventListener('click', e => {
+      const pill = e.target.closest('.dur-pill');
+      if (pill) setDurFilter(pill.dataset.dur);
+    });
+
+    /* Recurrence */
+    document.getElementById('recurrenceSelect').addEventListener('change', e => {
+      state.recurrence = e.target.value;
+    });
+
+    /* Confirm button → open modal */
+    document.getElementById('confirmBtn').addEventListener('click', openModal);
+
+    /* Modal controls */
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+    document.getElementById('submitBtn').addEventListener('click', submitBooking);
+    document.getElementById('successClose').addEventListener('click', closeModal);
+    document.getElementById('bookingModal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+
+    /* Language change: re-render calendar labels */
+    document.addEventListener('fd:langchange', () => {
+      renderCalendar();
+      renderPanel();
+      /* Re-apply i18n to dynamic recurrence select options */
+      const sel = document.getElementById('recurrenceSelect');
+      sel.querySelectorAll('option[data-i18n]').forEach(opt => {
+        const key = opt.getAttribute('data-i18n');
+        const val = t(key);
+        if (val) opt.textContent = val;
       });
     });
-  })();
+
+    /* Hamburger menu */
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobile-nav');
+    if (hamburger && mobileNav) {
+      hamburger.addEventListener('click', () => {
+        const open = hamburger.classList.toggle('open');
+        hamburger.setAttribute('aria-expanded', String(open));
+        mobileNav.setAttribute('aria-hidden', String(!open));
+        mobileNav.classList.toggle('open');
+      });
+      mobileNav.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => {
+          hamburger.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+          mobileNav.setAttribute('aria-hidden', 'true');
+          mobileNav.classList.remove('open');
+        });
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
 </script>
 </body>
 </html>
