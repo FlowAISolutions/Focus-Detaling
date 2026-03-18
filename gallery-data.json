@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "id": "local-1",
+      "label": "Full Detail Transformation",
+      "type": "video",
+      "src": "detailing videos/detailing video.mp4"
+    },
+    {
+      "id": "local-2",
+      "label": "Before & After Detail",
+      "type": "video",
+      "src": "detailing videos/detailing video 2.mp4"
+    }
+  ]
+}

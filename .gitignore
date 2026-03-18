@@ -14,3 +14,6 @@ screenshot.mjs
 package.json
 package-lock.json
 BIO.txt
+
+# Admin panel — contains hardcoded credentials, never commit
+admin.html
